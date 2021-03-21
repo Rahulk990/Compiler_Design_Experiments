@@ -1,6 +1,6 @@
 # Compiler Design: Lab Experiments
 
-A repository for experiments performed in the Compiler Design practical lab as a part of the Compiler Design Course. All the programs are written in C++.
+A repository for experiments performed in the Compiler Design lab as a part of the Compiler Design Course. All the programs are written in C++.
 
 ## _List of Experiments_
 - Conversion of Non-Deterministic Finite Automata to Deterministic Finite Automata 
