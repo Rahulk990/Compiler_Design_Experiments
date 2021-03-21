@@ -1,0 +1,5 @@
+FOLLOW(E): {), $}
+FOLLOW(T): {), +, -, $}
+FOLLOW(E'): {), $}
+FOLLOW(F): {), +, -, *, /, $}
+FOLLOW(T'): {), +, -, $}

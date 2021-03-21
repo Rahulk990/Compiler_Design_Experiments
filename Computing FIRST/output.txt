@@ -1,0 +1,12 @@
+FIRST(E): {(, id}
+FIRST(T): {(, id}
+FIRST(E'): {+, -, ε}
+FIRST(F): {(, id}
+FIRST(T'): {ε, *, /}
+FIRST((): {(}
+FIRST()): {)}
+FIRST(id): {id}
+FIRST(+): {+}
+FIRST(-): {-}
+FIRST(*): {*}
+FIRST(/): {/}

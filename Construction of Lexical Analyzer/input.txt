@@ -1,0 +1,12 @@
+int main()
+(
+    int x := 10;
+    if(x > 5.0)
+        print("Greater");
+
+    /* Comments */
+    for(int i := 0; i = x; i++)
+        print(i);
+
+    return 0;
+)

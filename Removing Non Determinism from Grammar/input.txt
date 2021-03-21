@@ -1,0 +1,3 @@
+S => aAd | aB
+A => a | ab
+B => ccd | cdc

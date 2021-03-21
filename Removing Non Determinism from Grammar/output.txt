@@ -1,0 +1,6 @@
+S => aS1 
+A => aA1 
+B => cB1 
+S1 => Ad | B 
+A1 => ε | b 
+B1 => cd | dc 

@@ -1,0 +1,2 @@
+Enter String: 1100
+String Accepted: String has Even number of Zeros and Ones
