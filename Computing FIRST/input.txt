@@ -1,5 +1,5 @@
-E => T E' 
-T => F T' 
-F => ( E ) | id 
-E' => + T E' | - T E' | ε 
-T' => * F T' | / F T' | ε 
+E => T E'
+T => F T'
+F => ( E ) | id
+E' => + T E' | - T E' | ε
+T' => * F T' | / F T' | ε

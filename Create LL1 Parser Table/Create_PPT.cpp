@@ -106,7 +106,7 @@ public:
         for (int i = 0; i < production.size(); i++)
         {
             char c = production[i];
-            if (c == ' ' || i == production.size() - 1)
+            if (c == ' ')
             {
                 if (!flag)
                 {
@@ -162,7 +162,7 @@ public:
         {
             string line;
             while (getline(my_file, line))
-                addRule(line);
+                addRule(line + " ");
             my_file.close();
         }
     }
