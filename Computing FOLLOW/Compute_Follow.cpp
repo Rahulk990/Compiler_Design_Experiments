@@ -202,45 +202,46 @@ public:
         int epsilon = installSymbol("\u03B5");
         for (auto productionRule : productionRules)
         {
-            bool isFound = false, isEnd = false;
+            vector<int> foundAt;
             vector<Symbol *> rightSide = productionRule->getRightSide();
 
             for (int i = 0; i < rightSide.size(); i++)
+                if (rightSide[i] == S)
+                    foundAt.push_back(i);
+
+            for (int j = 0; j < foundAt.size(); j++)
             {
-                auto symbol = rightSide[i];
-                if (symbol == S)
+                bool isEnd = false;
+                if (foundAt[j] == rightSide.size() - 1)
+                    isEnd = true;
+                
+                for (int i = foundAt[j] + 1; i < rightSide.size(); i++)
                 {
-                    isFound = true;
+                    auto symbol = rightSide[i];
+                    set<Symbol *> first = symbol->getFirst();
+
+                    for (auto newSymbol : first)
+                    {
+                        if (newSymbol != symbols[epsilon])
+                            S->insertFollow(newSymbol);
+                    }
+
+                    if (first.find(symbols[epsilon]) == first.end())
+                        break;
 
                     if (i == rightSide.size() - 1)
                         isEnd = true;
                 }
 
-                if (symbol == S || !isFound)
-                    continue;
-
-                set<Symbol *> first = symbol->getFirst();
-                for (auto newSymbol : first)
+                auto leftSide = productionRule->getLeftSide();
+                if (isEnd && S != leftSide)
                 {
-                    if (newSymbol != symbols[epsilon])
+                    computeFollow(leftSide);
+                    set<Symbol *> follow = leftSide->getFollow();
+
+                    for (auto newSymbol : follow)
                         S->insertFollow(newSymbol);
                 }
-
-                if (first.find(symbols[epsilon]) == first.end())
-                    break;
-
-                if (i == rightSide.size() - 1)
-                    isEnd = true;
-            }
-            
-            auto leftSide = productionRule->getLeftSide();
-            if (isEnd && S != leftSide)
-            {
-                computeFollow(leftSide);
-                set<Symbol *> follow = leftSide->getFollow();
-
-                for (auto newSymbol : follow)
-                    S->insertFollow(newSymbol);
             }
         }
     }
