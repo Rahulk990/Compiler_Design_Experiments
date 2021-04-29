@@ -1,6 +1,7 @@
 #include <bits/stdc++.h>
 using namespace std;
 
+// For Explanation, check the LL1 Parsing Table Code 
 class Symbol
 {
     string name;

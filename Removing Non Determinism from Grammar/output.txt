@@ -1,6 +1,7 @@
-S => aS1 
+S => aS1 | bS2 
 A => aA1 
 B => cB1 
 S1 => Ad | B 
+S2 => A | B 
 A1 => ε | b 
 B1 => cd | dc 

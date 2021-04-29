@@ -3,8 +3,8 @@ using namespace std;
 
 class ProductionRule
 {
-    string LeftHandSide;
-    vector<string> productions;
+    string LeftHandSide;            // Stores the Head of production rule
+    vector<string> productions;     // Stores the body of production rules
 
 public:
     ProductionRule(string leftHandSide)
@@ -12,6 +12,7 @@ public:
         this->LeftHandSide = leftHandSide;
     }
 
+    // Returns the head of the production rule
     string getLHS()
     {
         return LeftHandSide;
@@ -24,6 +25,7 @@ public:
             this->productions.push_back(production);
     }
 
+    // Returns the body of the production rules
     vector<string> getProductions()
     {
         return productions;
@@ -34,6 +36,7 @@ public:
         productions.push_back(production);
     }
 
+    // Prints the production rules
     void printRule()
     {
         string toPrint = "";
@@ -52,6 +55,8 @@ class Grammar
     vector<ProductionRule> productionRules;
 
 public:
+
+    // Adds rule to the grammar
     void addRule(string rule)
     {
         bool nt = 0;
@@ -96,6 +101,7 @@ public:
         }
     }
 
+    // Left Factoring Algorithm
     ProductionRule leftFactoring(ProductionRule A)
     {
         string LHS = A.getLHS();
@@ -118,6 +124,7 @@ public:
                     temp.push_back(j);
             }
 
+            // If only one such production is there
             if (temp.size() == 1)
             {
                 checked[i] = 1;
@@ -125,6 +132,7 @@ public:
                 continue;
             }
 
+            // Else finding the common prefix
             int commonPrefixLength = 0;
             string commonPrefix = "";
             while (true)
@@ -170,11 +178,13 @@ public:
                 checked[tp] = 1;
             }
 
+            // Creating new Production Rule for the common prefix
             ProductionRule newProductionRule(newLHS);
             newProductionRule.setProductions(newProductionsA1);
             productionRules.push_back(newProductionRule);
         }
 
+        // Amending the original production rule
         ProductionRule newProductionRule(LHS);
         newProductionRule.setProductions(newProductionsA);
         return newProductionRule;
@@ -188,6 +198,7 @@ public:
         }
     }
 
+    // Prints all the rules of the grammar
     void printRules()
     {
         for (auto productionRule : productionRules)

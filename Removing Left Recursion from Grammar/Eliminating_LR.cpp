@@ -3,8 +3,8 @@ using namespace std;
 
 class NonTerminal
 {
-	string name;
-	vector<string> productionRules;
+	string name;						// Stores the Head of production rule
+	vector<string> productionRules;		// Stores the body of production rules
 
 public:
 	NonTerminal(string name)
@@ -12,11 +12,13 @@ public:
 		this->name = name;
 	}
 
+	// Returns the head of the production rule
 	string getName()
 	{
 		return name;
 	}
 
+	// Returns the body of the production rules
 	void setRules(vector<string> rules)
 	{
 		productionRules.clear();
@@ -34,6 +36,7 @@ public:
 		productionRules.push_back(rule);
 	}
 
+	// Prints the production rules
 	void printRule()
 	{
 		string toPrint = "";
@@ -52,6 +55,8 @@ class Grammar
 	vector<NonTerminal> nonTerminals;
 
 public:
+
+	// Add rules to the grammar
 	void addRule(string rule)
 	{
 		bool nt = 0;
@@ -96,6 +101,7 @@ public:
 		}
 	}
 
+	// Algorithm for eliminating the non-Immediate Left Recursion
 	void solveNonImmediateLR(NonTerminal &A, NonTerminal &B)
 	{
 		string nameA = A.getName();
@@ -119,6 +125,7 @@ public:
 		A.setRules(newRulesA);
 	}
 
+	// Algorithm for eliminating Immediate Left Recursion
 	void solveImmediateLR(NonTerminal &A)
 	{
 		string name = A.getName();
@@ -127,6 +134,7 @@ public:
 		vector<string> alphas, betas, rules, newRulesA, newRulesA1;
 		rules = A.getRules();
 
+		// Checks if there is left recursion or not
 		for (auto rule : rules)
 		{
 			if (rule.substr(0, name.size()) == name)
@@ -135,6 +143,7 @@ public:
 				betas.push_back(rule);
 		}
 
+		// If no left recursion, exit
 		if (!alphas.size())
 			return;
 
@@ -147,14 +156,17 @@ public:
 		for (auto alpha : alphas)
 			newRulesA1.push_back(alpha + newName);
 
+		// Amends the original rule
 		A.setRules(newRulesA);
 		newRulesA1.push_back("\u03B5");
 
+		// Adds new production rule
 		NonTerminal newNonTerminal(newName);
 		newNonTerminal.setRules(newRulesA1);
 		nonTerminals.push_back(newNonTerminal);
 	}
 
+	// Eliminates left recursion
 	void applyAlgorithm()
 	{
 		int size = nonTerminals.size();
@@ -166,6 +178,7 @@ public:
 		}
 	}
 
+	// Print all the rules of grammar
 	void printRules()
 	{
 		for (auto nonTerminal : nonTerminals)

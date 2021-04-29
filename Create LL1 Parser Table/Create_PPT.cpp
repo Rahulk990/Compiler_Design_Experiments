@@ -3,10 +3,10 @@ using namespace std;
 
 class Symbol
 {
-    string name;
-    bool nonTerminal;
-    set<Symbol *> first;
-    set<Symbol *> follow;
+    string name;            // Stores the grammar symbol
+    bool nonTerminal;       // Whether it is terminal or not
+    set<Symbol *> first;    // Stores the FIRST of the symbol
+    set<Symbol *> follow;   // Stores the FOLLOW of the symbol
 
 public:
     Symbol(string name)
@@ -15,6 +15,7 @@ public:
         nonTerminal = false;
     }
 
+    // Basic Methods
     string getName() { return name; }
     bool isNonTerminal() { return nonTerminal; }
     set<Symbol *> getFirst() { return first; }
@@ -23,6 +24,7 @@ public:
     void insertFirst(Symbol *symbol) { first.insert(symbol); }
     void insertFollow(Symbol *symbol) { follow.insert(symbol); }
 
+    // Prints the FIRST of the symbol
     void printFirst()
     {
         string toPrint = "";
@@ -38,6 +40,7 @@ public:
         cout << toPrint << endl;
     }
 
+    // Prints the FOLLOW of the symbol
     void printFollow()
     {
         string toPrint = "";
@@ -56,15 +59,18 @@ public:
 
 class ProductionRule
 {
-    Symbol *leftSide;
-    vector<Symbol *> rightSide;
+    Symbol *leftSide;               // Stores the head symbol of the production rule
+    vector<Symbol *> rightSide;     // Stores the body of the production rule in form of symbols
 
 public:
     ProductionRule(Symbol *left) { this->leftSide = left; }
+
+    // Basic Methods
     Symbol *getLeftSide() { return leftSide; }
     vector<Symbol *> getRightSide() { return rightSide; }
     void appendRightSide(Symbol *symbol) { rightSide.push_back(symbol); }
 
+    // Prints the production rule
     void printRule()
     {
         string toPrint = "";
@@ -78,13 +84,16 @@ public:
 
 class Grammar
 {
-    vector<Symbol *> symbols;
-    vector<ProductionRule *> productionRules;
+    vector<Symbol *> symbols;                                   // Stores all the symbols of the grammar
+    vector<ProductionRule *> productionRules;                   // Stores all the production rules of the grammar
 
-    vector<Symbol *> terminals, nonTerminals;
-    vector<vector<ProductionRule *>> predictiveParserTable;
+    vector<Symbol *> terminals, nonTerminals;                   // Stores the terminals and nonTerminals separately
+    vector<vector<ProductionRule *>> predictiveParserTable;     // Stores the predictive parser table for the grammar
 
 public:
+
+    // Checks for second occurrence of the symbol
+    // Inserts one, if not already present
     int installSymbol(string name)
     {
         for (int i = 0; i < symbols.size(); i++)
@@ -95,6 +104,7 @@ public:
         return -1;
     }
 
+    // Adds rule to the grammar
     void addRule(string production)
     {
         bool flag = false;
@@ -155,6 +165,7 @@ public:
         }
     }
 
+    // Takes input from the input file 
     void inputData()
     {
         ifstream my_file("input.txt");
@@ -167,6 +178,7 @@ public:
         }
     }
 
+    // Compute First of any Substring of symbols
     set<Symbol *> computeFirstRightSide(vector<Symbol *> rightSide)
     {
         set<Symbol *> newFirst;
@@ -185,8 +197,10 @@ public:
         return newFirst;
     }
 
+    // Compute First for any given symbol
     void computeFirst(Symbol *S)
-    {
+    {   
+        // If the symbol is a terminal, it is the FIRST itself
         if (!S->isNonTerminal())
         {
             S->insertFirst(S);
@@ -196,38 +210,45 @@ public:
         int epsilon = installSymbol("\u03B5");
         for (auto productionRule : productionRules)
         {
+            // Traverse over all productions and check if the head is required symbol or not
             if (productionRule->getLeftSide() != S)
                 continue;
 
+            // Inserts the symbols in the first of given symbol, according to the rules
             vector<Symbol *> rightSide = productionRule->getRightSide();
             for (auto symbol : rightSide)
             {
                 if (symbol == S)
                     continue;
 
+                // Compute first of the leftmost symbol
                 computeFirst(symbol);
                 set<Symbol *> first = symbol->getFirst();
 
                 for (auto newSymbol : first)
                     S->insertFirst(newSymbol);
 
+                // If it doesn't contain epislon, exits
                 if (first.find(symbols[epsilon]) == first.end())
                     break;
             }
         }
     }
 
+    // Compute Follow for the given nonTerminals
     void computeFollow(Symbol *S)
     {
+        // If symbol is a terminal, exits
         if (!S->isNonTerminal())
             return;
-
+        
         int epsilon = installSymbol("\u03B5");
         for (auto productionRule : productionRules)
         {
             bool isFound = false, isEnd = false;
             vector<Symbol *> rightSide = productionRule->getRightSide();
 
+            // Traverse over all productions and check if body contains required symbol or not
             for (int i = 0; i < rightSide.size(); i++)
             {
                 auto symbol = rightSide[i];
@@ -241,6 +262,7 @@ public:
                 if (symbol == S || !isFound)
                     continue;
 
+                // Inserts the symbols in the follow of given symbol, according to the rules
                 set<Symbol *> first = symbol->getFirst();
                 for (auto newSymbol : first)
                 {
@@ -248,6 +270,7 @@ public:
                         S->insertFollow(newSymbol);
                 }
 
+                // If the first of next symbol doesn't contain epislon, exits
                 if (first.find(symbols[epsilon]) == first.end())
                     break;
 
@@ -255,6 +278,8 @@ public:
                     isEnd = true;
             }
 
+            // If the first of complete right side contains epsilon
+            // Adds the Follow of head to teh Follow of given symbol 
             auto leftSide = productionRule->getLeftSide();
             if (isEnd && S != leftSide)
             {
@@ -266,6 +291,7 @@ public:
         }
     }
 
+    // Separates the Symbols into terminals and non-terminals
     void separateSymbols()
     {
         for (auto symbol : symbols)
@@ -280,6 +306,7 @@ public:
         }
     }
 
+    // Creates the Predictive Parsing Table for the grammar
     void createTable()
     {
         int rows = nonTerminals.size();
@@ -288,6 +315,7 @@ public:
         int epsilon = installSymbol("\u03B5");
         predictiveParserTable.resize(rows, vector<ProductionRule *>(columns, NULL));
 
+        // Traverse all the production rules and fill the corresponding entries in the table using rules
         for (auto productionRule : productionRules)
         {
             auto leftSide = productionRule->getLeftSide();
@@ -331,6 +359,7 @@ public:
         createTable();
     }
 
+    // Print all rules of the grammar
     void printRules()
     {
         for (auto productionRule : productionRules)
@@ -340,6 +369,7 @@ public:
         }
     }
 
+    // Prints the FIRST of all the symbols in the grammar
     void printFirst()
     {
         for (auto symbol : symbols)
@@ -350,6 +380,7 @@ public:
         }
     }
 
+    // Prints the FOLLOW of all the symbols in the grammar 
     void printFollow()
     {
         for (auto symbol : symbols)
@@ -359,6 +390,7 @@ public:
         }
     }
 
+    // Prints the Predictive Parser Table for the grammar
     void printTable()
     {
         int rows = nonTerminals.size();

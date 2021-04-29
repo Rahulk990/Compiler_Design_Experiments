@@ -1,5 +1,7 @@
+R => ER' 
 E => TE' 
 T => FT' 
 F => (E) | id 
+R' => rER' | ε 
 E' => +TE' | -TE' | ε 
 T' => *FT' | /FT' | ε 
